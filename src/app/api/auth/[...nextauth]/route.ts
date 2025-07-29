@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 const handler = NextAuth({
@@ -47,14 +47,16 @@ const handler = NextAuth({
     })
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async jwt({ token, user }: { token: any; user: any }) {
       if (user) {
         token.accessToken = user.accessToken;
         token.preferences = user.preferences;
       }
       return token;
     },
-    async session({ session, token }) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async session({ session, token }: { session: any; token: any }) {
       if (token && session.user) {
         session.user.id = token.sub!;
         session.accessToken = token.accessToken;

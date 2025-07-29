@@ -294,9 +294,20 @@ app.get('/api/movies', async (req, res) => {
     if (apiKey) {
       try {
         console.log('Attempting to fetch from TMDB...');
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        
         const response = await fetch(
-          `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}`
+          `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}`,
+          {
+            signal: controller.signal,
+            headers: {
+              'Accept': 'application/json',
+            }
+          }
         );
+        
+        clearTimeout(timeoutId);
 
         console.log('TMDB Response status:', response.status);
         

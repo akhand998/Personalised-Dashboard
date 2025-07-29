@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '../../store';
-import Image from 'next/image';
 import { getMovies } from './moviesSlice';
 import { RootState } from '../../store';
 import { addFavorite, removeFavorite } from '../../store/preferencesSlice';
@@ -40,6 +39,7 @@ const MoviesFeed: React.FC = () => {
   console.log('MoviesFeed: Redux state - movies:', movies, 'status:', status, 'error:', error);
   const { favorites = [] } = useSelector((state: RootState) => state.preferences);
   const [showAll, setShowAll] = useState(false);
+  const [imageErrors, setImageErrors] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     console.log('MoviesFeed: Dispatching getMovies action');
@@ -47,6 +47,10 @@ const MoviesFeed: React.FC = () => {
   }, [dispatch]);
 
   const isFavorited = (movie: Movie) => favorites.some((fav: FavoriteItem) => fav.id === movie.id && fav.type === 'movie');
+
+  const handleImageError = (movieId: number) => {
+    setImageErrors(prev => new Set(prev).add(movieId));
+  };
 
   const displayedMovies = showAll ? movies : movies.slice(0, 4);
 
@@ -68,15 +72,22 @@ const MoviesFeed: React.FC = () => {
       <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
         {displayedMovies.map((movie: Movie) => (
           <li key={movie.id} className="bg-gradient-to-br from-white via-purple-50 to-violet-50 dark:from-gray-950 dark:via-gray-900 dark:to-black p-6 rounded-3xl shadow-xl border border-purple-200/50 dark:border-purple-500/20 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col items-center group">
-            {movie.poster_path && (
+            {movie.poster_path && !imageErrors.has(movie.id) ? (
               <div className="mb-4 rounded-2xl shadow-lg w-40 h-60 relative overflow-hidden group-hover:scale-105 transition-transform">
-                <Image 
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img 
                   src={`https://image.tmdb.org/t/p/w300${movie.poster_path}`} 
                   alt={movie.title} 
-                  fill
-                  className="object-cover"
-                  sizes="160px"
+                  className="w-full h-full object-cover"
+                  onError={() => handleImageError(movie.id)}
                 />
+              </div>
+            ) : (
+              <div className="mb-4 rounded-2xl shadow-lg w-40 h-60 bg-gradient-to-br from-purple-200 to-violet-200 dark:from-purple-800 dark:to-violet-800 flex items-center justify-center group-hover:scale-105 transition-transform">
+                <div className="text-center">
+                  <div className="text-4xl mb-2">🎬</div>
+                  <div className="text-xs text-purple-600 dark:text-purple-300 font-medium">Movie Poster</div>
+                </div>
               </div>
             )}
             <div className="text-xl font-bold text-center mb-2 text-gray-800 dark:text-gray-100">{movie.title}</div>
