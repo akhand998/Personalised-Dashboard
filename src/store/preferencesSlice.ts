@@ -1,9 +1,21 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+// Define types for favorite items
+interface FavoriteItem {
+  id?: string | number;
+  type?: 'movie' | 'news';
+  title: string;
+  description: string;
+  url: string;
+  source?: {
+    name: string;
+  };
+}
+
 interface PreferencesState {
   categories: string[];
   darkMode: boolean;
-  favorites: any[];
+  favorites: FavoriteItem[];
 }
 
 const initialState: PreferencesState = {
@@ -25,7 +37,7 @@ const preferencesSlice = createSlice({
     setDarkMode(state, action: PayloadAction<boolean>) {
       state.darkMode = action.payload;
     },
-    addFavorite(state, action: PayloadAction<any>) {
+    addFavorite(state, action: PayloadAction<FavoriteItem>) {
       if (!state.favorites) state.favorites = [];
       if (
         (action.payload.type === 'movie' && !state.favorites.some(fav => fav.type === 'movie' && fav.id === action.payload.id)) ||
@@ -40,7 +52,7 @@ const preferencesSlice = createSlice({
         (fav.type !== 'movie' && `news-${fav.url}` !== action.payload)
       );
     },
-    setFavorites(state, action: PayloadAction<any[]>) {
+    setFavorites(state, action: PayloadAction<FavoriteItem[]>) {
       state.favorites = action.payload;
     },
   },

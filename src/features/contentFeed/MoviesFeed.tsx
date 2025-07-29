@@ -2,16 +2,40 @@
 
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch } from '../../store';
+import Image from 'next/image';
 import { getMovies } from './moviesSlice';
 import { RootState } from '../../store';
 import { addFavorite, removeFavorite } from '../../store/preferencesSlice';
 
+// Define types for movie data
+interface Movie {
+  id: number;
+  title: string;
+  overview: string;
+  poster_path: string;
+  vote_average: number;
+  type?: 'movie';
+}
+
+// Define types for favorite items
+interface FavoriteItem {
+  id?: string | number;
+  type?: 'movie' | 'news';
+  title: string;
+  description: string;
+  url: string;
+  source?: {
+    name: string;
+  };
+}
+
 // Helper to get a unique id for each favorite
-const getFavoriteId = (item: any) =>
-  item.type === 'movie' ? `movie-${item.id}` : `news-${item.url}`;
+const getFavoriteId = (item: Movie): string =>
+  item.type === 'movie' ? `movie-${item.id}` : `news-${item.id}`;
 
 const MoviesFeed: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const { movies, status, error } = useSelector((state: RootState) => state.movies);
   console.log('MoviesFeed: Redux state - movies:', movies, 'status:', status, 'error:', error);
   const { favorites = [] } = useSelector((state: RootState) => state.preferences);
@@ -19,10 +43,10 @@ const MoviesFeed: React.FC = () => {
 
   useEffect(() => {
     console.log('MoviesFeed: Dispatching getMovies action');
-    dispatch(getMovies() as any);
+    dispatch(getMovies());
   }, [dispatch]);
 
-  const isFavorited = (movie: any) => favorites.some((fav: any) => fav.id === movie.id && fav.type === 'movie');
+  const isFavorited = (movie: Movie) => favorites.some((fav: FavoriteItem) => fav.id === movie.id && fav.type === 'movie');
 
   const displayedMovies = showAll ? movies : movies.slice(0, 4);
 
@@ -42,10 +66,18 @@ const MoviesFeed: React.FC = () => {
     <div className="w-full max-w-5xl mx-auto">
       <h2 className="text-4xl font-bold mb-10 text-transparent bg-gradient-to-r from-purple-600 to-violet-600 dark:from-purple-400 dark:to-violet-400 bg-clip-text">🎬 Popular Movies</h2>
       <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-        {displayedMovies.map((movie: any) => (
+        {displayedMovies.map((movie: Movie) => (
           <li key={movie.id} className="bg-gradient-to-br from-white via-purple-50 to-violet-50 dark:from-gray-950 dark:via-gray-900 dark:to-black p-6 rounded-3xl shadow-xl border border-purple-200/50 dark:border-purple-500/20 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col items-center group">
             {movie.poster_path && (
-              <img src={`https://image.tmdb.org/t/p/w300${movie.poster_path}`} alt={movie.title} className="mb-4 rounded-2xl shadow-lg w-40 h-60 object-cover group-hover:scale-105 transition-transform" />
+              <div className="mb-4 rounded-2xl shadow-lg w-40 h-60 relative overflow-hidden group-hover:scale-105 transition-transform">
+                <Image 
+                  src={`https://image.tmdb.org/t/p/w300${movie.poster_path}`} 
+                  alt={movie.title} 
+                  fill
+                  className="object-cover"
+                  sizes="160px"
+                />
+              </div>
             )}
             <div className="text-xl font-bold text-center mb-2 text-gray-800 dark:text-gray-100">{movie.title}</div>
             <div className="text-sm text-purple-600 dark:text-purple-400 mb-2">Rating: {movie.vote_average}</div>
@@ -59,7 +91,12 @@ const MoviesFeed: React.FC = () => {
               onClick={() =>
                 isFavorited(movie)
                   ? dispatch(removeFavorite(getFavoriteId({ ...movie, type: 'movie' })))
-                  : dispatch(addFavorite({ ...movie, type: 'movie' }))
+                  : dispatch(addFavorite({ 
+                      ...movie, 
+                      type: 'movie',
+                      description: movie.overview,
+                      url: `https://www.themoviedb.org/movie/${movie.id}`
+                    }))
               }
             >
               {isFavorited(movie) ? '💜 Remove Favorite' : '🤍 Add to Favorites'}

@@ -22,8 +22,9 @@ const LoginForm: React.FC = () => {
       } else {
         await register(email, password);
       }
-    } catch (error: any) {
-      setError(error.message || 'Authentication failed');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Authentication failed';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

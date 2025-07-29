@@ -9,7 +9,19 @@ interface User {
   preferences: {
     categories: string[];
     darkMode: boolean;
-    favorites: any[];
+    favorites: FavoriteItem[];
+  };
+}
+
+// Define types for favorite items
+interface FavoriteItem {
+  id?: string | number;
+  type?: 'movie' | 'news';
+  title: string;
+  description: string;
+  url: string;
+  source?: {
+    name: string;
   };
 }
 

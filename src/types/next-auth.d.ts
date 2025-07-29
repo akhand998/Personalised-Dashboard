@@ -1,4 +1,14 @@
-import NextAuth from "next-auth";
+// Define types for favorite items
+interface FavoriteItem {
+  id?: string | number;
+  type?: 'movie' | 'news';
+  title: string;
+  description: string;
+  url: string;
+  source?: {
+    name: string;
+  };
+}
 
 declare module "next-auth" {
   interface Session {
@@ -9,7 +19,7 @@ declare module "next-auth" {
       preferences: {
         categories: string[];
         darkMode: boolean;
-        favorites: any[];
+        favorites: FavoriteItem[];
       };
     };
   }
@@ -20,7 +30,7 @@ declare module "next-auth" {
     preferences: {
       categories: string[];
       darkMode: boolean;
-      favorites: any[];
+      favorites: FavoriteItem[];
     };
     accessToken: string;
   }
@@ -32,7 +42,7 @@ declare module "next-auth/jwt" {
     preferences?: {
       categories: string[];
       darkMode: boolean;
-      favorites: any[];
+      favorites: FavoriteItem[];
     };
   }
 } 

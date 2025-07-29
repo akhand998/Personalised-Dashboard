@@ -3,6 +3,22 @@
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 
+// Define types for data
+interface NewsArticle {
+  title: string;
+  description: string;
+  url: string;
+  source?: {
+    name: string;
+  };
+}
+
+interface Movie {
+  title: string;
+  overview: string;
+  vote_average: number;
+}
+
 const TrendingNews: React.FC = () => {
   const { articles, status: newsStatus, error: newsError } = useSelector((state: RootState) => state.news);
   const { movies, status: moviesStatus, error: moviesError } = useSelector((state: RootState) => state.movies);
@@ -27,7 +43,7 @@ const TrendingNews: React.FC = () => {
       <div className="mb-12">
         <h3 className="text-2xl font-bold mb-6 text-purple-700 dark:text-purple-300">Trending News</h3>
         <ul className="space-y-8">
-          {trendingNews.map((article: any, idx: number) => (
+          {trendingNews.map((article: NewsArticle, idx: number) => (
             <li key={idx} className="bg-gradient-to-br from-white via-purple-50 to-violet-50 dark:from-gray-950 dark:via-gray-900 dark:to-black p-6 rounded-3xl shadow-xl border border-purple-200/50 dark:border-purple-500/20 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group">
               <div className="flex items-start gap-6">
                 <div className="bg-gradient-to-br from-purple-500 to-violet-500 text-white rounded-2xl w-12 h-12 flex items-center justify-center font-bold text-lg shadow-lg">
@@ -54,7 +70,7 @@ const TrendingNews: React.FC = () => {
       <div>
         <h3 className="text-2xl font-bold mb-6 text-purple-700 dark:text-purple-300">Trending Movies</h3>
         <ul className="space-y-8">
-          {trendingMovies.map((movie: any, idx: number) => (
+          {trendingMovies.map((movie: Movie, idx: number) => (
             <li key={idx} className="bg-gradient-to-br from-white via-purple-50 to-violet-50 dark:from-gray-950 dark:via-gray-900 dark:to-black p-6 rounded-3xl shadow-xl border border-purple-200/50 dark:border-purple-500/20 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group">
               <div className="flex items-start gap-6">
                 <div className="bg-gradient-to-br from-purple-500 to-violet-500 text-white rounded-2xl w-12 h-12 flex items-center justify-center font-bold text-lg shadow-lg">

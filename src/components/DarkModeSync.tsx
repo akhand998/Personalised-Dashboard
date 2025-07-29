@@ -32,7 +32,7 @@ export default function DarkModeSync() {
       const html = document.documentElement;
       console.log('DarkModeSync: Initial html classes:', html.className);
     }
-  }, []);
+  }, [darkMode]);
 
   return null;
 } 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { signIn, getSession } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 export default function SignIn() {
@@ -59,7 +59,7 @@ export default function SignIn() {
           }
         }
       }
-    } catch (error) {
+    } catch {
       setError('Authentication failed');
     } finally {
       setLoading(false);

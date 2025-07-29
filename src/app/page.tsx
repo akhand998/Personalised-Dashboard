@@ -9,10 +9,22 @@ import MoviesFeed from '../features/contentFeed/MoviesFeed';
 import DashboardLayout from '../components/DashboardLayout';
 import TrendingNews from '../features/contentFeed/TrendingNews';
 import { RootState } from '../store';
-import { DndContext, closestCenter } from '@dnd-kit/core';
+import { DndContext, closestCenter, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { setFavorites } from '../store/preferencesSlice';
+
+// Define types for our data
+interface FavoriteItem {
+  id?: string | number;
+  type?: 'movie' | 'news';
+  title: string;
+  description: string;
+  url: string;
+  source?: {
+    name: string;
+  };
+}
 
 function useDebouncedValue(value: string, delay: number) {
   const [debounced, setDebounced] = useState(value);
@@ -24,10 +36,10 @@ function useDebouncedValue(value: string, delay: number) {
 }
 
 // Helper to get a unique id for each favorite
-const getFavoriteId = (item: any) =>
+const getFavoriteId = (item: FavoriteItem): string =>
   item.type === 'movie' ? `movie-${item.id}` : `news-${item.url}`;
 
-function SortableFavorite({ item, idx, id }: { item: any; idx: number; id: string }) {
+function SortableFavorite({ item, idx, id }: { item: FavoriteItem; idx: number; id: string }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -79,18 +91,21 @@ export default function DashboardPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearch = useDebouncedValue(searchTerm, 400);
   const dispatch = useDispatch();
-  const favorites = useSelector((state: RootState) => state.preferences.favorites) || [];
   const { data: session, status } = useSession();
+  const favorites = useSelector((state: RootState) => state.preferences.favorites) || [];
 
-  const handleDragEnd = useCallback((event: any) => {
+  // Memoize favorites to prevent unnecessary re-renders
+  const memoizedFavorites = useMemo(() => favorites, [favorites]);
+
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
-    if (active.id !== over?.id) {
-      const oldIndex = favorites.findIndex((item: any) => getFavoriteId(item) === active.id);
-      const newIndex = favorites.findIndex((item: any) => getFavoriteId(item) === over.id);
-      const newFavorites = arrayMove(favorites, oldIndex, newIndex);
+    if (active.id !== over?.id && over) {
+      const oldIndex = memoizedFavorites.findIndex((item: FavoriteItem) => getFavoriteId(item) === active.id);
+      const newIndex = memoizedFavorites.findIndex((item: FavoriteItem) => getFavoriteId(item) === over.id);
+      const newFavorites = arrayMove(memoizedFavorites, oldIndex, newIndex);
       dispatch(setFavorites(newFavorites));
     }
-  }, [favorites, dispatch]);
+  }, [memoizedFavorites, dispatch]);
 
   // Show loading state
   if (status === 'loading') {
@@ -139,7 +154,7 @@ export default function DashboardPage() {
     content = (
       <div className="w-full max-w-5xl mx-auto">
         <h2 className="text-4xl font-bold mb-10 text-transparent bg-gradient-to-r from-purple-600 to-violet-600 dark:from-purple-400 dark:to-violet-400 bg-clip-text">⭐ My Favorites</h2>
-        {favorites.length === 0 ? (
+        {memoizedFavorites.length === 0 ? (
           <div className="text-center py-16 bg-gradient-to-br from-white via-purple-50 to-violet-50 dark:from-gray-950 dark:via-gray-900 dark:to-black rounded-3xl shadow-xl border border-purple-200/50 dark:border-purple-500/20">
             <div className="text-6xl mb-4">💜</div>
             <h3 className="text-2xl font-bold text-gray-700 dark:text-gray-100 mb-2">No favorites yet</h3>
@@ -147,9 +162,9 @@ export default function DashboardPage() {
           </div>
         ) : (
           <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-            <SortableContext items={favorites.map(getFavoriteId)} strategy={verticalListSortingStrategy}>
+            <SortableContext items={memoizedFavorites.map(getFavoriteId)} strategy={verticalListSortingStrategy}>
               <ul className="space-y-4">
-                {favorites.map((item: any, idx: number) => (
+                {memoizedFavorites.map((item: FavoriteItem, idx: number) => (
                   <SortableFavorite key={getFavoriteId(item)} id={getFavoriteId(item)} item={item} idx={idx} />
                 ))}
               </ul>

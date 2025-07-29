@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch } from '../../store';
 import { getNews } from './newsSlice';
 import { RootState } from '../../store';
 import { addFavorite, removeFavorite } from '../../store/preferencesSlice';
@@ -10,8 +11,31 @@ interface NewsFeedProps {
   searchTerm?: string;
 }
 
+// Define types for news article data
+interface NewsArticle {
+  title: string;
+  description: string;
+  url: string;
+  source?: {
+    name: string;
+  };
+  type?: 'news';
+}
+
+// Define types for favorite items
+interface FavoriteItem {
+  id?: string | number;
+  type?: 'movie' | 'news';
+  title: string;
+  description: string;
+  url: string;
+  source?: {
+    name: string;
+  };
+}
+
 const NewsFeed: React.FC<NewsFeedProps> = ({ searchTerm = '' }) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const { articles, status, error } = useSelector((state: RootState) => state.news);
   const { categories, favorites = [] } = useSelector((state: RootState) => state.preferences);
   const [showAll, setShowAll] = useState(false);
@@ -19,17 +43,17 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ searchTerm = '' }) => {
   useEffect(() => {
     // Use the first selected category or 'general' as default
     const category = categories[0] || 'general';
-    dispatch(getNews(category) as any);
+    dispatch(getNews(category));
   }, [dispatch, categories]);
 
-  const filteredArticles = articles.filter((article: any) => {
+  const filteredArticles = articles.filter((article: NewsArticle) => {
     const text = (article.title + ' ' + article.description).toLowerCase();
     return text.includes(searchTerm.toLowerCase());
   });
 
   const displayedArticles = showAll ? filteredArticles : filteredArticles.slice(0, 4);
 
-  const isFavorited = (article: any) => favorites.some((fav: any) => fav.url === article.url);
+  const isFavorited = (article: NewsArticle) => favorites.some((fav: FavoriteItem) => fav.url === article.url);
 
   if (status === 'loading') return (
     <div className="text-center py-12">
@@ -47,7 +71,7 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ searchTerm = '' }) => {
     <div className="w-full max-w-5xl mx-auto">
       <h2 className="text-4xl font-bold mb-10 text-transparent bg-gradient-to-r from-purple-600 to-violet-600 dark:from-purple-400 dark:to-violet-400 bg-clip-text">📰 News Feed</h2>
       <ul className="space-y-8">
-        {displayedArticles.map((article: any, idx: number) => (
+        {displayedArticles.map((article: NewsArticle, idx: number) => (
           <li key={idx} className="bg-gradient-to-br from-white via-purple-50 to-violet-50 dark:from-gray-950 dark:via-gray-900 dark:to-black p-8 rounded-3xl shadow-xl border border-purple-200/50 dark:border-purple-500/20 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group">
             <a href={article.url} target="_blank" rel="noopener noreferrer" className="text-2xl font-bold hover:text-purple-600 dark:hover:text-purple-400 transition-colors mb-4 block group-hover:scale-105 text-gray-900 dark:text-gray-100">
               {article.title}
