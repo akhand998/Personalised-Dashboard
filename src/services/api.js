@@ -142,7 +142,15 @@ class ApiService {
   }
 
   async getMovies() {
-    return this.request('/movies');
+    console.log('API Service: Making request to /movies');
+    try {
+      const result = await this.request('/movies');
+      console.log('API Service: Movies response:', result);
+      return result;
+    } catch (error) {
+      console.error('API Service: Error fetching movies:', error);
+      throw error;
+    }
   }
 }
 

@@ -289,14 +289,20 @@ app.get('/api/movies', async (req, res) => {
 
     // Try to fetch from TMDB first
     const apiKey = process.env.TMDB_API_KEY;
+    console.log('TMDB API Key:', apiKey ? 'Present' : 'Missing');
+    
     if (apiKey) {
       try {
+        console.log('Attempting to fetch from TMDB...');
         const response = await fetch(
           `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}`
         );
 
+        console.log('TMDB Response status:', response.status);
+        
         if (response.ok) {
           const data = await response.json();
+          console.log('TMDB API successful, returning real data');
           
           // Cache the result
           moviesCache.set(cacheKey, {
@@ -305,10 +311,16 @@ app.get('/api/movies', async (req, res) => {
           });
 
           return res.json(data.results);
+        } else {
+          console.error('TMDB API failed with status:', response.status);
+          const errorText = await response.text();
+          console.error('TMDB API error response:', errorText);
         }
       } catch (error) {
         console.error('TMDB API error:', error);
       }
+    } else {
+      console.log('No TMDB API key found, using mock data');
     }
 
     // Fallback to mock data if TMDB fails

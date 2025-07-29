@@ -13,10 +13,12 @@ const getFavoriteId = (item: any) =>
 const MoviesFeed: React.FC = () => {
   const dispatch = useDispatch();
   const { movies, status, error } = useSelector((state: RootState) => state.movies);
+  console.log('MoviesFeed: Redux state - movies:', movies, 'status:', status, 'error:', error);
   const { favorites = [] } = useSelector((state: RootState) => state.preferences);
   const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
+    console.log('MoviesFeed: Dispatching getMovies action');
     dispatch(getMovies() as any);
   }, [dispatch]);
 
