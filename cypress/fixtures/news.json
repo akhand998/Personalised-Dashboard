@@ -1,0 +1,34 @@
+{
+  "articles": [
+    {
+      "id": "1",
+      "title": "Breaking News: Technology Advances",
+      "description": "Latest developments in technology sector show promising trends for the future.",
+      "url": "https://example.com/news/1",
+      "source": {
+        "name": "Tech News"
+      },
+      "publishedAt": "2024-01-15T10:00:00Z"
+    },
+    {
+      "id": "2",
+      "title": "Sports Update: Championship Results",
+      "description": "Exciting results from the latest championship matches across various sports.",
+      "url": "https://example.com/news/2",
+      "source": {
+        "name": "Sports Central"
+      },
+      "publishedAt": "2024-01-15T09:30:00Z"
+    },
+    {
+      "id": "3",
+      "title": "Entertainment: New Movie Releases",
+      "description": "Check out the latest movie releases and entertainment industry updates.",
+      "url": "https://example.com/news/3",
+      "source": {
+        "name": "Entertainment Weekly"
+      },
+      "publishedAt": "2024-01-15T08:45:00Z"
+    }
+  ]
+} 

@@ -16,7 +16,7 @@ app.use(cors({
   origin: ['http://localhost:3002', 'http://localhost:3004', 'http://localhost:3005', 'http://localhost:3000'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
 // Rate limiting

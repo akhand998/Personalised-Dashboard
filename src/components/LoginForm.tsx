@@ -46,12 +46,14 @@ const LoginForm: React.FC = () => {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6" data-testid={isLogin ? "login-form" : "register-form"}>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label htmlFor="email-input" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Email Address
               </label>
               <input
+                id="email-input"
+                data-testid="email-input"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -62,10 +64,12 @@ const LoginForm: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label htmlFor="password-input" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Password
               </label>
               <input
+                id="password-input"
+                data-testid="password-input"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -76,18 +80,19 @@ const LoginForm: React.FC = () => {
             </div>
 
             {error && (
-              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-4">
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-4" data-testid="error-message">
                 <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
               </div>
             )}
 
             <button
+              data-testid={isLogin ? "login-button" : "register-button"}
               type="submit"
               disabled={loading}
               className="w-full bg-gradient-to-r from-purple-500 to-violet-500 text-white py-3 rounded-2xl font-semibold hover:from-purple-600 hover:to-violet-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               {loading ? (
-                <div className="flex items-center justify-center">
+                <div className="flex items-center justify-center" data-testid="loading-spinner">
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
                   {isLogin ? 'Signing In...' : 'Creating Account...'}
                 </div>
@@ -100,6 +105,7 @@ const LoginForm: React.FC = () => {
           {/* Toggle */}
           <div className="mt-6 text-center">
             <button
+              data-testid={isLogin ? "register-toggle" : "login-toggle"}
               onClick={() => setIsLogin(!isLogin)}
               className="text-purple-600 dark:text-purple-400 hover:underline font-medium"
             >

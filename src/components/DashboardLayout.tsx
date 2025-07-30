@@ -18,7 +18,7 @@ interface DashboardLayoutProps {
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, currentSection, onSectionChange, searchTerm, onSearchTermChange }) => {
   return (
-    <div className="h-screen w-screen flex overflow-hidden bg-gray-50 dark:bg-gray-950">
+    <div className="h-screen w-screen flex overflow-hidden bg-gray-50 dark:bg-gray-950" data-testid="dashboard-layout">
       {/* Sidebar */}
       <aside className="w-64 h-screen fixed left-0 top-0 z-20 bg-gradient-to-b from-purple-600 via-violet-600 to-fuchsia-600 text-white shadow-2xl flex flex-col p-8">
         <div className="text-3xl font-extrabold mb-12 tracking-tight flex items-center gap-3">
@@ -29,6 +29,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, currentSect
           {navItems.map((item) => (
             <button
               key={item.value}
+              data-testid={`nav-${item.value}`}
               onClick={() => onSectionChange(item.value)}
               className={`flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-300 font-semibold text-lg group
                 ${currentSection === item.value
@@ -49,6 +50,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, currentSect
         <header className="sticky top-0 z-10 h-24 bg-gradient-to-r from-purple-600 via-violet-600 to-fuchsia-600 shadow-2xl flex items-center px-12 justify-between">
           <div className="w-2/3">
             <input
+              data-testid="search-input"
               type="text"
               placeholder="Search for news and content..."
               className="w-full px-6 py-4 rounded-2xl border-none bg-white/90 dark:bg-gray-900/90 text-gray-800 dark:text-gray-100 shadow-lg focus:ring-4 focus:ring-purple-400/50 focus:outline-none transition-all duration-300 text-lg placeholder-gray-500 dark:placeholder-gray-400"
@@ -63,7 +65,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, currentSect
           </div>
         </header>
         {/* Scrollable Content */}
-        <main className="flex-1 overflow-y-auto p-12 bg-gray-50 dark:bg-gray-950">
+        <main className="flex-1 overflow-y-auto p-12 bg-gray-50 dark:bg-gray-950" data-testid="content-container">
           {children}
         </main>
       </div>

@@ -1,0 +1,31 @@
+{
+  "results": [
+    {
+      "id": 1,
+      "title": "The Adventure Begins",
+      "overview": "An epic journey through unknown lands with unexpected challenges.",
+      "poster_path": "/movie1.jpg",
+      "release_date": "2024-01-15",
+      "vote_average": 8.5,
+      "genre_ids": [12, 28, 16]
+    },
+    {
+      "id": 2,
+      "title": "Mystery of the Deep",
+      "description": "A thrilling underwater adventure that explores the ocean's secrets.",
+      "poster_path": "/movie2.jpg",
+      "release_date": "2024-01-10",
+      "vote_average": 7.8,
+      "genre_ids": [53, 28, 12]
+    },
+    {
+      "id": 3,
+      "title": "Comedy Central",
+      "description": "A hilarious comedy that will keep you laughing from start to finish.",
+      "poster_path": "/movie3.jpg",
+      "release_date": "2024-01-05",
+      "vote_average": 7.2,
+      "genre_ids": [35, 10749]
+    }
+  ]
+} 

@@ -10,13 +10,16 @@ const handler = NextAuth({
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          return null;
-        }
-
         try {
-          // Call our secure API server on the correct port
-          const response = await fetch('http://localhost:5000/api/auth/login', {
+          if (!credentials?.email || !credentials?.password) {
+            return null;
+          }
+
+          // Call the backend API for authentication
+          const backendUrl = process.env.BACKEND_URL || 'http://localhost:5000';
+          console.log('NextAuth: Attempting to authenticate with backend at:', backendUrl);
+          
+          const response = await fetch(`${backendUrl}/api/auth/login`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -28,52 +31,34 @@ const handler = NextAuth({
           });
 
           if (!response.ok) {
-            console.error('Login failed:', response.status, response.statusText);
+            console.error('Backend authentication failed:', response.status);
             return null;
           }
 
-          const user = await response.json();
-          return {
-            id: user.user.id,
-            email: user.user.email,
-            preferences: user.user.preferences,
-            accessToken: user.token,
-          };
+          const data = await response.json();
+          
+          if (data.user) {
+            return {
+              id: data.user.id,
+              email: data.user.email,
+              name: data.user.email.split('@')[0], // Use email prefix as name
+              accessToken: data.token,
+            };
+          }
+          
+          return null;
         } catch (error) {
-          console.error('Auth error:', error);
+          console.error('Authentication error:', error);
           return null;
         }
       }
     })
   ],
-  callbacks: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async jwt({ token, user }: { token: any; user: any }) {
-      if (user) {
-        token.accessToken = user.accessToken;
-        token.preferences = user.preferences;
-      }
-      return token;
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async session({ session, token }: { session: any; token: any }) {
-      if (token && session.user) {
-        session.user.id = token.sub!;
-        session.accessToken = token.accessToken;
-        if (token.preferences) {
-          session.user.preferences = token.preferences;
-        }
-      }
-      return session;
-    },
-  },
-  pages: {
-    signIn: '/auth/signin',
-  },
   session: {
     strategy: "jwt",
   },
   secret: process.env.NEXTAUTH_SECRET,
+  debug: true,
 });
 
 export { handler as GET, handler as POST }; 
