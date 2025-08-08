@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 5000;
 // Security middleware
 app.use(helmet());
 app.use(cors({
-  origin: ['http://localhost:3002', 'http://localhost:3004', 'http://localhost:3005', 'http://localhost:3000'],
+  origin: ['http://localhost:3002','https://personalised-dashboard.vercel.app', 'http://localhost:3004', 'http://localhost:3005', 'http://localhost:3000'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
