@@ -45,7 +45,7 @@ const createTestStore = (initialState = {}) => {
 
 interface TestWrapperProps {
   children: React.ReactNode
-  initialState?: any
+  initialState?: Record<string, unknown>
 }
 
 export const TestWrapper: React.FC<TestWrapperProps> = ({ children, initialState = {} }) => {
