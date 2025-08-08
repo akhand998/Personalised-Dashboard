@@ -1,8 +1,8 @@
 import React from 'react'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import DashboardLayout from '../DashboardLayout'
-import { TestWrapper, createTestStore } from '../../utils/TestWrapper'
+import { TestWrapper } from '../../utils/TestWrapper'
 
 // Mock the AuthContext
 const mockUser = {
