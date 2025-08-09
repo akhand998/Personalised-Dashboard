@@ -34,7 +34,7 @@ export default function SignIn() {
         }
       } else {
         // Registration flow - call our API directly
-        const registerUrl = `${API_CONFIG.BASE_URL}/auth/register`;
+        const registerUrl = `${API_CONFIG.BASE_URL}/api/auth/register`;
         const response = await fetch(registerUrl, {
           method: 'POST',
           headers: {
