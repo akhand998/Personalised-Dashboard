@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { API_CONFIG } from '@/config/api'; // Import API_CONFIG
 
 export default function SignIn() {
   const [email, setEmail] = useState('');
@@ -33,7 +34,8 @@ export default function SignIn() {
         }
       } else {
         // Registration flow - call our API directly
-        const response = await fetch('http://localhost:5000/api/auth/register', {
+        const registerUrl = `${API_CONFIG.BASE_URL}/auth/register`;
+        const response = await fetch(registerUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -159,4 +161,4 @@ export default function SignIn() {
       </div>
     </div>
   );
-} 
+}
