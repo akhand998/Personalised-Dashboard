@@ -13,10 +13,22 @@ const PORT = process.env.PORT || 5000;
 // Security middleware
 app.use(helmet());
 app.use(cors({
-
-
-  origin: ['http://localhost:3002','https://personalised-dashboard.vercel.app', 'http://localhost:3004', 'http://localhost:3005', 'http://localhost:3000'],
-
+  origin: (origin, callback) => {
+    const allowedOrigins = process.env.FRONTEND_URLS 
+      ? process.env.FRONTEND_URLS.split(',') 
+      : [
+          'http://localhost:3002', 
+          'http://localhost:3004', 
+          'http://localhost:3005', 
+          'http://localhost:3000',
+          'https://personalised-dashboard.vercel.app'
+        ];
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
@@ -28,7 +40,7 @@ const limiter = rateLimit({
   max: 100, // limit each IP to 100 requests per windowMs
   message: 'Too many requests from this IP, please try again later.'
 });
-app.use('/api/', limiter);
+app.use(limiter);
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
@@ -77,12 +89,12 @@ const authenticateToken = (req, res, next) => {
 // Routes
 
 // Health check
-app.get('/api/health', (req, res) => {
+app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
 // User registration
-app.post('/api/auth/register', async (req, res) => {
+app.post('/auth/register', async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -142,7 +154,7 @@ app.post('/api/auth/register', async (req, res) => {
 });
 
 // User login
-app.post('/api/auth/login', async (req, res) => {
+app.post('/auth/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -187,7 +199,7 @@ app.post('/api/auth/login', async (req, res) => {
 });
 
 // Get user preferences
-app.get('/api/user/preferences', authenticateToken, async (req, res) => {
+app.get('/user/preferences', authenticateToken, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId);
     if (!user) {
@@ -205,7 +217,7 @@ app.get('/api/user/preferences', authenticateToken, async (req, res) => {
 });
 
 // Update user preferences
-app.put('/api/user/preferences', authenticateToken, async (req, res) => {
+app.put('/user/preferences', authenticateToken, async (req, res) => {
   try {
     const { categories, darkMode, favorites } = req.body;
 
@@ -239,7 +251,7 @@ app.put('/api/user/preferences', authenticateToken, async (req, res) => {
 const newsCache = new Map();
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-app.get('/api/news/:category', async (req, res) => {
+app.get('/news/:category', async (req, res) => {
   try {
     const { category } = req.params;
     const cacheKey = `news_${category}`;
@@ -281,7 +293,7 @@ app.get('/api/news/:category', async (req, res) => {
 // Movies API proxy with caching
 const moviesCache = new Map();
 
-app.get('/api/movies', async (req, res) => {
+app.get('/movies', async (req, res) => {
   try {
     const cacheKey = 'movies_popular';
     const cached = moviesCache.get(cacheKey);
@@ -432,8 +444,5 @@ app.use('*', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-  console.log(`Health check: http://localhost:${PORT}/api/health`);
-
-
-}); 
-
+  console.log(`Health check: http://localhost:${PORT}/health`);
+});
