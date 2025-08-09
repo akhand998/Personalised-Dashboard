@@ -138,13 +138,13 @@ class ApiService {
 
   // Content APIs
   async getNews(category = 'general') {
-    return this.request(`/news/${category}`);
+    return this.request(`/api/news/${category}`);
   }
 
   async getMovies() {
     console.log('API Service: Making request to /movies');
     try {
-      const result = await this.request('/movies');
+      const result = await this.request('/api/movies');
       console.log('API Service: Movies response:', result);
       return result;
     } catch (error) {
