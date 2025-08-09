@@ -13,22 +13,10 @@ const PORT = process.env.PORT || 5000;
 // Security middleware
 app.use(helmet());
 app.use(cors({
-  origin: (origin, callback) => {
-    const allowedOrigins = process.env.FRONTEND_URLS 
-      ? process.env.FRONTEND_URLS.split(',') 
-      : [
-          'http://localhost:3002', 
-          'http://localhost:3004', 
-          'http://localhost:3005', 
-          'http://localhost:3000',
-          'https://personalised-dashboard.vercel.app'
-        ];
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+
+
+  origin: ['http://localhost:3002','https://personalised-dashboard.vercel.app', 'http://localhost:3004', 'http://localhost:3005', 'http://localhost:3000'],
+
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
@@ -445,4 +433,7 @@ app.use('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Health check: http://localhost:${PORT}/api/health`);
-});
+
+
+}); 
+
