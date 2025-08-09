@@ -16,7 +16,7 @@ const handler = NextAuth({
           }
 
           // Call the backend API for authentication
-          const backendUrl = process.env.BACKEND_URL || 'http://localhost:5000';
+          const backendUrl = process.env.BACKEND_URL || 'https://personalised-dashboard.vercel.app/server-api';
           console.log('NextAuth: Attempting to authenticate with backend at:', backendUrl);
           
           const response = await fetch(`${backendUrl}/api/auth/login`, {

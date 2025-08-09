@@ -92,10 +92,10 @@ export default function DashboardPage() {
   const debouncedSearch = useDebouncedValue(searchTerm, 400);
   const dispatch = useDispatch();
   const { data: session, status } = useSession();
-  const favorites = useSelector((state: RootState) => state.preferences.favorites) || [];
+  const favoritesFromStore = useSelector((state: RootState) => state.preferences.favorites);
 
   // Memoize favorites to prevent unnecessary re-renders
-  const memoizedFavorites = useMemo(() => favorites, [favorites]);
+  const memoizedFavorites = useMemo(() => favoritesFromStore || [], [favoritesFromStore]);
 
   const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;

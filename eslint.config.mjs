@@ -11,6 +11,20 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
+  {
+    files: ["server/**/*.js"],
+    languageOptions: {
+      sourceType: "commonjs",
+      globals: {
+        ...compat.globals("node"),
+      },
+    },
+    rules: {
+      // Add any specific rules for server-side JS here if needed
+      // For example, if you want to allow console.log in server files:
+      // "no-console": "off",
+    },
+  },
 ];
 
 export default eslintConfig;

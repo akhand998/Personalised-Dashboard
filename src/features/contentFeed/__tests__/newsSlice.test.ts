@@ -110,7 +110,7 @@ describe('newsSlice', () => {
 
       try {
         await getNews('technology')(dispatch, getState, undefined)
-      } catch (error) {
+      } catch {
         // Expected to throw
       }
 
