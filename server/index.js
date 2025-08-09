@@ -97,7 +97,7 @@ app.get('/health', (req, res) => {
 });
 
 // User registration
-app.post('/auth/register', async (req, res) => {
+app.post('/api/auth/register', async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -157,7 +157,7 @@ app.post('/auth/register', async (req, res) => {
 });
 
 // User login
-app.post('/auth/login', async (req, res) => {
+app.post('/api/auth/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -202,7 +202,7 @@ app.post('/auth/login', async (req, res) => {
 });
 
 // Get user preferences
-app.get('/user/preferences', authenticateToken, async (req, res) => {
+app.get('/api/user/preferences', authenticateToken, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId);
     if (!user) {
@@ -220,7 +220,7 @@ app.get('/user/preferences', authenticateToken, async (req, res) => {
 });
 
 // Update user preferences
-app.put('/user/preferences', authenticateToken, async (req, res) => {
+app.put('/api/user/preferences', authenticateToken, async (req, res) => {
   try {
     const { categories, darkMode, favorites } = req.body;
 
@@ -254,7 +254,7 @@ app.put('/user/preferences', authenticateToken, async (req, res) => {
 const newsCache = new Map();
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-app.get('/news/:category', async (req, res) => {
+app.get('/api/news/:category', async (req, res) => {
   try {
     const { category } = req.params;
     const cacheKey = `news_${category}`;
@@ -296,7 +296,7 @@ app.get('/news/:category', async (req, res) => {
 // Movies API proxy with caching
 const moviesCache = new Map();
 
-app.get('/movies', async (req, res) => {
+app.get('/api/movies', async (req, res) => {
   try {
     const cacheKey = 'movies_popular';
     const cached = moviesCache.get(cacheKey);
