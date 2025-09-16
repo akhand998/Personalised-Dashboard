@@ -33,7 +33,7 @@ export default function SignIn() {
           router.push('/');
         }
       } else {
-        // Registration flow - call our API directly
+        
         const registerUrl = `${API_CONFIG.BASE_URL}/api/auth/register`;
         const response = await fetch(registerUrl, {
           method: 'POST',
@@ -47,7 +47,7 @@ export default function SignIn() {
           const errorData = await response.json();
           setError(errorData.error || 'Registration failed');
         } else {
-          // After successful registration, automatically sign in
+         
           const result = await signIn('credentials', {
             email,
             password,
