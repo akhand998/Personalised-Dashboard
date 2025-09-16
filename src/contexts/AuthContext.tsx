@@ -59,8 +59,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         if (apiService.isAuthenticated()) {
           const preferences = await apiService.getUserPreferences();
           setUser({
-            id: 'user-id', // You might want to get this from the token
-            email: 'user@example.com', // You might want to get this from the token
+            id: 'user-id', 
+            email: 'user@example.com', 
             preferences: preferences.preferences
           });
         }
